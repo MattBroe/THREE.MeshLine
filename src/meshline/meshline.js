@@ -162,9 +162,9 @@ export class MeshLine extends THREE.BufferGeometry {
       this.width.push(w)
 
       if (this.colorCallback) customColor = this.colorCallback(j / (l - 1))
-      else customColor = new THREE.Vector3(-1, 0, 0)
-      this.customColor.push(customColor[0], customColor[1], customColor[2])
-      this.customColor.push(customColor[0], customColor[1], customColor[2])
+      else customColor = new THREE.Color(-1, 0, 0)
+      this.customColor.push(customColor.r, customColor.g, customColor.b)
+      this.customColor.push(customColor.r, customColor.g, customColor.b)
 
       // uvs
       this.uvs.push(j / (l - 1), 0)
