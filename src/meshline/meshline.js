@@ -20,6 +20,7 @@ export class MeshLine extends THREE.BufferGeometry {
     this._geom = null
 
     this.widthCallback = null
+    this.colorCallback = null
 
     // Used to raycast
     this.matrixWorld = new THREE.Matrix4()
@@ -76,7 +77,7 @@ export class MeshLine extends THREE.BufferGeometry {
     }
   }
 
-  setPoints(points, wcb) {
+  setPoints(points, wcb, ccb) {
     if (!(points instanceof Float32Array) && !(points instanceof Array)) {
       console.error('ERROR: The BufferArray of points is not instancied correctly.')
       return
@@ -85,6 +86,7 @@ export class MeshLine extends THREE.BufferGeometry {
     // for later retreival when necessary (declaritive architectures)
     this._points = points
     this.widthCallback = wcb
+    this.colorCallback = ccb
     this.positions = []
     this.counters = []
     if (points.length && points[0] instanceof THREE.Vector3) {
@@ -131,10 +133,13 @@ export class MeshLine extends THREE.BufferGeometry {
     this.width = []
     this.indices_array = []
     this.uvs = []
+    this.customColors = []
 
     let w
 
     let v
+
+    let customColor
     // initial previous points
     if (this.compareV3(0, l - 1)) {
       v = this.copyV3(l - 2)
@@ -154,6 +159,11 @@ export class MeshLine extends THREE.BufferGeometry {
       else w = 1
       this.width.push(w)
       this.width.push(w)
+
+      if (this.colorCallback) customColor = this.colorCallback(j / (l - 1))
+      else customColor = new THREE.Vector3(-1, 0, 0)
+      this.customColors.push(customColor[0], customColor[1], customColor[2])
+      this.customColors.push(customColor[0], customColor[1], customColor[2])
 
       // uvs
       this.uvs.push(j / (l - 1), 0)
@@ -198,7 +208,8 @@ export class MeshLine extends THREE.BufferGeometry {
         width: new THREE.BufferAttribute(new Float32Array(this.width), 1),
         uv: new THREE.BufferAttribute(new Float32Array(this.uvs), 2),
         index: new THREE.BufferAttribute(new Uint16Array(this.indices_array), 1),
-        counters: new THREE.BufferAttribute(new Float32Array(this.counters), 1)
+        counters: new THREE.BufferAttribute(new Float32Array(this.counters), 1),
+        customColors: new THREE.BufferAttribute(new Float32Array(this.customColors), 3)
       }
     } else {
       this._attributes.position.copyArray(new Float32Array(this.positions))
@@ -215,6 +226,8 @@ export class MeshLine extends THREE.BufferGeometry {
       this._attributes.uv.needsUpdate = true
       this._attributes.index.copyArray(new Uint16Array(this.indices_array))
       this._attributes.index.needsUpdate = true
+      this._attributes.customColors.copyArray(new Float32Array(this.customColors))
+      this._attributes.customColors.needsUpdate = true
     }
 
     this.setAttribute('position', this._attributes.position)
@@ -224,6 +237,7 @@ export class MeshLine extends THREE.BufferGeometry {
     this.setAttribute('width', this._attributes.width)
     this.setAttribute('uv', this._attributes.uv)
     this.setAttribute('counters', this._attributes.counters)
+    this.setAttribute('customColor', this._attributes.customColors)
 
     this.setIndex(this._attributes.index)
 
