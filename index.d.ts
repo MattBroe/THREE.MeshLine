@@ -6,7 +6,11 @@ export class MeshLine extends THREE.BufferGeometry {
   points: Float32Array | Array<number>;
   isMeshLine: boolean;
 
-  setPoints(points: Float32Array | Array<number>, wcb?: (p: number) => any, ccb?: (p: number) => THREE.Vector3): void;
+  setPoints(
+      points: Float32Array | Array<number>, 
+      wcb?: (p: number, position: THREE.Vector3) => Number, 
+      ccb?: (p: number, position: THREE.Vector3) => THREE.Color
+    ): void;
   setMatrixWorld(matrixWorld: THREE.Matrix4): void;
   setGeometry(g: THREE.BufferGeometry, c: (p: number) => any): void;
   raycast: (raycaster: THREE.Raycaster, intersects: THREE.Intersection[]) => void;
