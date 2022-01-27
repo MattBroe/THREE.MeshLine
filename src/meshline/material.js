@@ -38,7 +38,7 @@ THREE.ShaderChunk['meshline_vert'] = [
   '    float aspect = resolution.x / resolution.y;',
   '',
   '    if ( customColor.x >= 0.0) vColor = vec4( customColor, opacity );',
-  '    else vColor = vec4( color, opacity );',
+  '    else vColor = vec4( customColor, opacity );',
   '    vUV = uv;',
   '',
   '    mat4 m = projectionMatrix * modelViewMatrix;',
