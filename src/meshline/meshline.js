@@ -155,13 +155,14 @@ export class MeshLine extends THREE.BufferGeometry {
       this.side.push(1)
       this.side.push(-1)
 
+      let position = new THREE.Vector3(this.positions[3 * j, this.positions[3 * j + 1], this.positions[3 * j + 1]])
       // widths
-      if (this.widthCallback) w = this.widthCallback(j / (l - 1))
+      if (this.widthCallback) w = this.widthCallback(j / (l - 1), position)
       else w = 1
       this.width.push(w)
       this.width.push(w)
 
-      if (this.colorCallback) customColor = this.colorCallback(j / (l - 1))
+      if (this.colorCallback) customColor = this.colorCallback(j / (l - 1), position)
       else customColor = new THREE.Color(-1, 0, 0)
       this.customColor.push(customColor.r, customColor.g, customColor.b)
       this.customColor.push(customColor.r, customColor.g, customColor.b)
