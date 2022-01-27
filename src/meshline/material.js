@@ -99,6 +99,8 @@ THREE.ShaderChunk['meshline_frag'] = [
   'uniform float visibility;',
   'uniform float alphaTest;',
   'uniform vec2 repeat;',
+  'uniform vec2 color1',
+  'uniform vec2 color2',
   '',
   'varying vec2 vUV;',
   'varying vec4 vColor;',
@@ -115,8 +117,7 @@ THREE.ShaderChunk['meshline_frag'] = [
   '    if( useDash == 1. ){',
   '        c.a *= ceil(mod(vCounters + dashOffset, dashArray) - (dashArray * dashRatio));',
   '    }',
-  '    gl_FragColor = c;',
-  '    gl_FragColor.a *= step(vCounters, visibility);',
+  '    gl_FragColor = vec4(mix(color1, color2, vUV.y);',
   '',
   THREE.ShaderChunk.fog_fragment,
   '}'
