@@ -103,18 +103,19 @@ export class MeshLine extends THREE.BufferGeometry {
         this.counters = Array(countersLength);
       }
 
+      let point = Array(3);
+
       for (var j = 0; j < points.length; j++) {
         const p = points[j]
         var c = j / points.length
 
         let coordIdx = 6 * j;
-        this.positions[coordIdx] = p.x;
-        this.positions[coordIdx + 1] = p.y;
-        this.positions[coordIdx + 2] = p.z;
-        coordIdx += 3;
-        this.positions[coordIdx] = p.x;
-        this.positions[coordIdx + 1] = p.y;
-        this.positions[coordIdx + 2] = p.z;
+        point[0] = p.x;
+        point[1] = p.y;
+        point[2] = p.z;
+
+        this.setElementsArray(this.positions, coordIdx, point, 0, 3);
+        this.setElementsArray(this.positions, coordIdx + 3, point, 0, 3);
 
         let countIdx = 2 * j;
         this.counters[countIdx] = c;
@@ -137,13 +138,8 @@ export class MeshLine extends THREE.BufferGeometry {
         var c = j / points.length
 
         let coordIdx = 2 * j;
-        this.positions[coordIdx] = points[j];
-        this.positions[coordIdx + 1] = points[j + 1];
-        this.positions[coordIdx + 2] = points[j + 2];
-        coordIdx += 3;
-        this.positions[coordIdx] = points[j];
-        this.positions[coordIdx + 1] = points[j + 1];
-        this.positions[coordIdx + 2] = points[j + 2];
+        this.setElementsArray(this.positions, coordIdx, points, j, 3);
+        this.setElementsArray(this.positions, coordIdx + 3, points, j, 3);
 
         let countIdx = 2 * j / 3;
         this.counters[countIdx] = c;
@@ -167,13 +163,33 @@ export class MeshLine extends THREE.BufferGeometry {
   process() {
     const l = this.positions.length / 6
 
-    this.previous = []
-    this.next = []
-    this.side = []
-    this.width = []
-    this.indices_array = []
-    this.uvs = []
-    this.customColor = []
+    if (this.previous.length !== 6 * l) {
+        this.previous = Array(6 * l);
+    }
+
+    if (this.next.length !== 6 * l) {
+        this.next = Array(6 * l);
+    }
+
+    if (this.side.length !== 2 * l) {
+        this.side = Array(2 * l);
+    }
+
+    if (this.width.length !== 2 * l) {
+        this.side = Array(2 * l);
+    }
+
+    if (this.indices_array.length !== 6 * (l - 1)) {
+        this.indices_array = Array(6 * (l - 1));
+    }
+
+    if (this.uvs.length !== 4 * l) {
+        this.uvs = Array(4 * l);
+    }
+
+    if (this.customColor.length !== 8 * l) {
+        this.customColor = Array(8 * l);
+    }
 
     let w
 
@@ -186,46 +202,61 @@ export class MeshLine extends THREE.BufferGeometry {
     } else {
       v = this.copyV3(0)
     }
-    this.previous.push(v[0], v[1], v[2])
-    this.previous.push(v[0], v[1], v[2])
+
+    this.setElementsArray(this.previous, 0, v, 0, 3);
+    this.setElementsArray(this.previous, 3, v, 0, 3);
+
+    let position = Array(3);
 
     for (let j = 0; j < l; j++) {
       // sides
-      this.side.push(1)
-      this.side.push(-1)
-
-      let position = new THREE.Vector3(this.positions[3 * j, this.positions[3 * j + 1], this.positions[3 * j + 1]])
+      this.side[2 * j] = 1;
+      this.side[2 * j + 1] = -1;
+    
+      position[0] = this.positions[3 * j];
+      position[1] = this.positions[3 * j + 1];
+      position[2] = this.positions[3 * j + 2];
       // widths
       if (this.widthCallback) w = this.widthCallback(j / (l - 1), position)
       else w = 1
-      this.width.push(w)
-      this.width.push(w)
+
+      this.width[2 * j] = w;
+      this.width[2 * j + 1] = w;
 
       if (this.colorCallback) customColor = this.colorCallback(j / (l - 1), position)
-      else customColor = new THREE.Color(-1, 0, 0)
-      this.customColor.push(customColor.r, customColor.g, customColor.b)
-      this.customColor.push(customColor.r, customColor.g, customColor.b)
+      else customColor = [-1, 0, 0, 0]
+      //rgba
+
+      this.setElementsArray(this.customColor, 4 * j, customColor, 0, 4);
+      this.setElementsArray(this.customColor, 4 * (j + 1), customColor, 0, 4);
 
       // uvs
-      this.uvs.push(j / (l - 1), 0)
-      this.uvs.push(j / (l - 1), 1)
+      let percent = j / (l - 1);
+
+      this.uvs[4 * j] = percent;
+      this.uvs[4 * j + 1] = 0;
+      this.uvs[4 * j + 2] = percent;
+      this.uvs[4 * j + 3] = 1;
+
+      v = this.copyV3(j)
 
       if (j < l - 1) {
         // points previous to poisitions
-        v = this.copyV3(j)
-        this.previous.push(v[0], v[1], v[2])
-        this.previous.push(v[0], v[1], v[2])
+        this.setElementsArray(this.previous, 6 * (j + 1), v, 0, 3);
+        this.setElementsArray(this.previous, 6 * (j + 1) + 3, v, 0, 3);
 
         // indices
         const n = j * 2
-        this.indices_array.push(n, n + 1, n + 2)
-        this.indices_array.push(n + 2, n + 1, n + 3)
+        this.indices_array[6 * j] = n;
+        this.indices_array[6 * j + 1] = n + 1;
+        this.indices_array[6 * j + 2] = n + 2;
+        this.indices_array[6 * j + 3] = n + 2;
+        this.indices_array[6 * j + 4] = n + 1;
+        this.indices_array[6 * j + 5] = n + 3;
       }
       if (j > 0) {
-        // points after poisitions
-        v = this.copyV3(j)
-        this.next.push(v[0], v[1], v[2])
-        this.next.push(v[0], v[1], v[2])
+        this.setElementsArray(this.next, 6 * (j - 1), v, 0, 3);
+        this.setElementsArray(this.next, 6 * (j - 1) + 3, v, 0, 3);
       }
     }
 
@@ -235,8 +266,9 @@ export class MeshLine extends THREE.BufferGeometry {
     } else {
       v = this.copyV3(l - 1)
     }
-    this.next.push(v[0], v[1], v[2])
-    this.next.push(v[0], v[1], v[2])
+
+    this.setElementsArray(this.next, 6 * (l - 1), v, 0, 3);
+    this.setElementsArray(this.next, 6 * (l - 1) + 3, v, 0, 3);
 
     // redefining the attribute seems to prevent range errors
     // if the user sets a differing number of vertices
@@ -250,7 +282,7 @@ export class MeshLine extends THREE.BufferGeometry {
         uv: new THREE.BufferAttribute(new Float32Array(this.uvs), 2),
         index: new THREE.BufferAttribute(new Uint16Array(this.indices_array), 1),
         counters: new THREE.BufferAttribute(new Float32Array(this.counters), 1),
-        customColor: new THREE.BufferAttribute(new Float32Array(this.customColor), 3)
+        customColor: new THREE.BufferAttribute(new Float32Array(this.customColor), 4)
       }
     } else {
       this._attributes.position.copyArray(new Float32Array(this.positions))
@@ -322,6 +354,12 @@ export class MeshLine extends THREE.BufferGeometry {
     this._attributes.position.needsUpdate = true
     this._attributes.previous.needsUpdate = true
     this._attributes.next.needsUpdate = true
+  }
+
+  setElementsArray(array, arrayStartIdx, vector, vectorStartIdx, length) {
+    for (let j = 0; j < length; j++) {
+        array[arrayStartIdx + j] = vector[vectorStartIdx + j];
+    }
   }
 }
 
