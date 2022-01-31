@@ -93,8 +93,15 @@ export class MeshLine extends THREE.BufferGeometry {
       // could transform Vector3 array into the array used below
       // but this approach will only loop through the array once
       // and is more performant
-      this.positions = Array(6 * points.length);
-      this.counters = Array(2 * points.length);
+      let positionsLength = 6 * points.length;
+      let countersLength = 2 * points.length;
+      if (this.positions.length !== positionsLength) {
+        this.positions = Array(positionsLength);
+      }
+
+      if (this.counters.length !== countersLength) {
+        this.counters = Array(countersLength);
+      }
 
       for (var j = 0; j < points.length; j++) {
         const p = points[j]
@@ -114,15 +121,25 @@ export class MeshLine extends THREE.BufferGeometry {
         this.counters[countIdx + 1] = c;
       }
     } else {
-      this.positions = Array(2 * points.length);
-      this.counters = Array(2 * points.length / 3);
+
+      let positionsLength = 2 * points.length;
+      let countersLength = 2 * points.length / 3;
+
+      if (this.positions.length !== positionsLength) {
+        this.positions = Array(positionsLength);
+      }
+
+      if (this.counters.length !== countersLength) {
+        this.counters = Array(countersLength);
+      }
+
       for (var j = 0; j < points.length; j += 3) {
         var c = j / points.length
 
         let coordIdx = 2 * j;
         this.positions[coordIdx] = points[j];
         this.positions[coordIdx + 1] = points[j + 1];
-        this.positions[coorIdx + 2] = points[j + 2];
+        this.positions[coordIdx + 2] = points[j + 2];
         coordIdx += 3;
         this.positions[coordIdx] = points[j];
         this.positions[coordIdx + 1] = points[j + 1];
