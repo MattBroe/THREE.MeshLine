@@ -13,7 +13,7 @@ export class MeshLine extends THREE.BufferGeometry {
     this.next = []
     this.side = []
     this.width = []
-    this.indices_array = []
+    this.indices = []
     this.uvs = []
     this.counters = []
     this.customColor = []
@@ -22,6 +22,26 @@ export class MeshLine extends THREE.BufferGeometry {
 
     this.widthCallback = null
     this.colorCallback = null
+
+    this.positionsFloat32 = new Float32Array();
+    this.previousFloat32 = new Float32Array();
+    this.nextFloat32 = new Float32Array();
+    this.sideFloat32 = new Float32Array();
+    this.widthFloat32 = new Float32Array();
+    this.uvsFloat32 = new Float32Array();
+    this.indices = new Uint16Array();
+    this.countersFloat32 = new Float32Array();
+    this.customColorFloat32 = new Float32Array();
+
+    // position: new THREE.BufferAttribute(new Float32Array(this.positions), 3),
+    // previous: new THREE.BufferAttribute(new Float32Array(this.previous), 3),
+    // next: new THREE.BufferAttribute(new Float32Array(this.next), 3),
+    // side: new THREE.BufferAttribute(new Float32Array(this.side), 1),
+    // width: new THREE.BufferAttribute(new Float32Array(this.width), 1),
+    // uv: new THREE.BufferAttribute(new Float32Array(this.uvs), 2),
+    // index: new THREE.BufferAttribute(new Uint16Array(this.indices_array), 1),
+    // counters: new THREE.BufferAttribute(new Float32Array(this.counters), 1),
+    // customColor: new THREE.BufferAttribute(new Float32Array(this.customColor), 4)
 
     // Used to raycast
     this.matrixWorld = new THREE.Matrix4()
@@ -179,8 +199,8 @@ export class MeshLine extends THREE.BufferGeometry {
         this.side = Array(2 * l);
     }
 
-    if (this.indices_array.length !== 6 * (l - 1)) {
-        this.indices_array = Array(6 * (l - 1));
+    if (this.indices.length !== 6 * (l - 1)) {
+        this.indices = Array(6 * (l - 1));
     }
 
     if (this.uvs.length !== 4 * l) {
@@ -247,12 +267,12 @@ export class MeshLine extends THREE.BufferGeometry {
 
         // indices
         const n = j * 2
-        this.indices_array[6 * j] = n;
-        this.indices_array[6 * j + 1] = n + 1;
-        this.indices_array[6 * j + 2] = n + 2;
-        this.indices_array[6 * j + 3] = n + 2;
-        this.indices_array[6 * j + 4] = n + 1;
-        this.indices_array[6 * j + 5] = n + 3;
+        this.indices[6 * j] = n;
+        this.indices[6 * j + 1] = n + 1;
+        this.indices[6 * j + 2] = n + 2;
+        this.indices[6 * j + 3] = n + 2;
+        this.indices[6 * j + 4] = n + 1;
+        this.indices[6 * j + 5] = n + 3;
       }
       if (j > 0) {
         this.setElementsArray(this.next, 6 * (j - 1), v, 0, 3);
@@ -270,36 +290,121 @@ export class MeshLine extends THREE.BufferGeometry {
     this.setElementsArray(this.next, 6 * (l - 1), v, 0, 3);
     this.setElementsArray(this.next, 6 * (l - 1) + 3, v, 0, 3);
 
+    let float32UpdateParams = [
+        [this.positions, this.positionsFloat32, () => this.positionsFloat32 = new Float32Array(this.positions)],
+        [this.previous, this.previousFloat32],
+        [this.next, this.nextFloat32],
+        [this.side, this.sideFloat32],
+        [this.width, this.widthFloat32],
+        [this.uvs, this.uvsFloat32],
+        [this.counters, this.countersFloat32],
+        [this.customColor, this.customColorFloat32]
+    ];
+
+    if (this.positions.length !== this.positionsFloat32.length) {
+        this.positionsFloat32 = new Float32Array(this.positions);
+    } else {
+        for (let j = 0; j < this.positionsFloat32.length; j++) {
+            this.positionsFloat32[j] = this.positions[j];
+        }
+    }
+
+    if (this.previous.length !== this.previousFloat32.length) {
+        this.previousFloat32 = new Float32Array(this.previous);
+    } else {
+        for (let j = 0; j < this.previousFloat32.length; j++) {
+            this.previousFloat32[j] = this.previous[j];
+        }
+    }
+
+    if (this.next.length !== this.nextFloat32.length) {
+        this.nextFloat32 = new Float32Array(this.next);
+    } else {
+        for (let j = 0; j < this.nextFloat32.length; j++) {
+            this.nextFloat32[j] = this.next[j];
+        }
+    }
+
+    if (this.side.length !== this.sideFloat32.length) {
+        this.sideFloat32 = new Float32Array(this.side);
+    } else {
+        for (let j = 0; j < this.sideFloat32.length; j++) {
+            this.sideFloat32[j] = this.side[j];
+        }
+    }
+
+    if (this.width.length !== this.widthFloat32.length) {
+        this.widthFloat32 = new Float32Array(this.width);
+    } else {
+        for (let j = 0; j < this.widthFloat32.length; j++) {
+            this.widthFloat32[j] = this.width[j];
+        }
+    }
+
+    if (this.uvs.length !== this.uvsFloat32.length) {
+        this.uvsFloat32 = new Float32Array(this.uvs);
+    } else {
+        for (let j = 0; j < this.uvsFloat32.length; j++) {
+            this.uvsFloat32[j] = this.uvs[j];
+        }
+    }
+
+    if (this.counters.length !== this.countersFloat32.length) {
+        this.countersFloat32 = new Float32Array(this.counters);
+    } else {
+        for (let j = 0; j < this.countersFloat32.length; j++) {
+            this.countersFloat32[j] = this.counters[j];
+        }
+    }
+
+    if (this.customColor.length !== this.customColorFloat32.length) {
+        this.customColorFloat32 = new Float32Array(this.customColor);
+    } else {
+        for (let j = 0; j < this.customColorFloat32.length; j++) {
+            this.customColorFloat32[j] = this.customColor[j];
+        }
+    }
+
+    if (this.indices.length !== this.indicesUInt16.length) {
+        this.indicesUInt16 = new Uint16Array(this.indices);
+    } else {
+        for (let j = 0; j < this.indicesUInt16.length; j++) {
+            this.indicesUInt16[j] = this.indices[j];
+        }
+    }
+
     // redefining the attribute seems to prevent range errors
     // if the user sets a differing number of vertices
     if (!this._attributes || this._attributes.position.count !== this.positions.length) {
       this._attributes = {
-        position: new THREE.BufferAttribute(new Float32Array(this.positions), 3),
-        previous: new THREE.BufferAttribute(new Float32Array(this.previous), 3),
-        next: new THREE.BufferAttribute(new Float32Array(this.next), 3),
-        side: new THREE.BufferAttribute(new Float32Array(this.side), 1),
-        width: new THREE.BufferAttribute(new Float32Array(this.width), 1),
-        uv: new THREE.BufferAttribute(new Float32Array(this.uvs), 2),
-        index: new THREE.BufferAttribute(new Uint16Array(this.indices_array), 1),
-        counters: new THREE.BufferAttribute(new Float32Array(this.counters), 1),
-        customColor: new THREE.BufferAttribute(new Float32Array(this.customColor), 4)
+        position: new THREE.BufferAttribute(this.positionsFloat32, 3),
+        previous: new THREE.BufferAttribute(this.previousFloat32, 3),
+        next: new THREE.BufferAttribute(this.nextFloat32, 3),
+        side: new THREE.BufferAttribute(this.sideFloat32, 1),
+        width: new THREE.BufferAttribute(this.widthFloat32, 1),
+        uv: new THREE.BufferAttribute(this.uvsFloat32, 2),
+        index: new THREE.BufferAttribute(this.indicesUInt16, 1),
+        counters: new THREE.BufferAttribute(this.countersFloat32, 1),
+        customColor: new THREE.BufferAttribute(this.customColorFloat32, 4)
       }
     } else {
-      this._attributes.position.copyArray(new Float32Array(this.positions))
+      this._attributes.position.copyArray(this.positionsFloat32)
       this._attributes.position.needsUpdate = true
-      this._attributes.previous.copyArray(new Float32Array(this.previous))
+      this._attributes.previous.copyArray(this.previousFloat32)
       this._attributes.previous.needsUpdate = true
-      this._attributes.next.copyArray(new Float32Array(this.next))
+      this._attributes.next.copyArray(this.nextFloat32)
       this._attributes.next.needsUpdate = true
-      this._attributes.side.copyArray(new Float32Array(this.side))
+      this._attributes.side.copyArray(this.sideFloat32)
       this._attributes.side.needsUpdate = true
-      this._attributes.width.copyArray(new Float32Array(this.width))
+      this._attributes.width.copyArray(this.widthFloat32)
       this._attributes.width.needsUpdate = true
-      this._attributes.uv.copyArray(new Float32Array(this.uvs))
+      this._attributes.uv.copyArray(this.uvsFloat32)
       this._attributes.uv.needsUpdate = true
-      this._attributes.index.copyArray(new Uint16Array(this.indices_array))
+      this._attributes.index.copyArray(this.indicesUInt16)
       this._attributes.index.needsUpdate = true
-      this._attributes.customColor.copyArray(new Float32Array(this.customColor))
+      this._attributes.counters.copyArray(this.countersFloat32)
+      this._attributes.counters.needsUpdate = true
+      this._attributes.customColor.copyArray(this.customColorFloat32)
       this._attributes.customColor.needsUpdate = true
     }
 
