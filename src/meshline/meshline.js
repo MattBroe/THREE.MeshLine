@@ -88,27 +88,49 @@ export class MeshLine extends THREE.BufferGeometry {
     this._points = points
     this.widthCallback = wcb
     this.colorCallback = ccb
-    this.positions = []
-    this.counters = []
+
     if (points.length && points[0] instanceof THREE.Vector3) {
       // could transform Vector3 array into the array used below
       // but this approach will only loop through the array once
       // and is more performant
+      this.positions = new Array<number>(6 * points.length);
+      this.counters = new Array<number>(2 * points.length);
+
       for (var j = 0; j < points.length; j++) {
         const p = points[j]
         var c = j / points.length
-        this.positions.push(p.x, p.y, p.z)
-        this.positions.push(p.x, p.y, p.z)
-        this.counters.push(c)
-        this.counters.push(c)
+
+        let coordIdx = 6 * j;
+        this.positions[coordIdx] = p.x;
+        this.positions[coordIdx + 1] = p.y;
+        this.positions[coordIdx + 2] = p.z;
+        coordIdx += 3;
+        this.positions[coordIdx] = p.x;
+        this.positions[coordIdx + 1] = p.y;
+        this.positions[coordIdx + 2] = p.z;
+
+        let countIdx = 2 * j;
+        this.counters[countIdx] = c;
+        this.counters[countIdx + 1] = c;
       }
     } else {
+      this.positions = new Array<number>(2 * points.length);
+      this.counters = new Array<number>(2 * points.length / 3);
       for (var j = 0; j < points.length; j += 3) {
         var c = j / points.length
-        this.positions.push(points[j], points[j + 1], points[j + 2])
-        this.positions.push(points[j], points[j + 1], points[j + 2])
-        this.counters.push(c)
-        this.counters.push(c)
+
+        let coordIdx = 2 * j;
+        this.positions[coordIdx] = points[j];
+        this.positions[coordIdx + 1] = points[j + 1];
+        this.positions[coorIdx + 2] = points[j + 2];
+        coordIdx += 3;
+        this.positions[coordIdx] = points[j];
+        this.positions[coordIdx + 1] = points[j + 1];
+        this.positions[coordIdx + 2] = points[j + 2];
+
+        let countIdx = 2 * j / 3;
+        this.counters[countIdx] = c;
+        this.counters[countIdx + 1] = c;
       }
     }
     this.process()
