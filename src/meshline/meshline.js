@@ -93,8 +93,8 @@ export class MeshLine extends THREE.BufferGeometry {
       // could transform Vector3 array into the array used below
       // but this approach will only loop through the array once
       // and is more performant
-      this.positions = new Array<number>(6 * points.length);
-      this.counters = new Array<number>(2 * points.length);
+      this.positions = Array(6 * points.length);
+      this.counters = Array(2 * points.length);
 
       for (var j = 0; j < points.length; j++) {
         const p = points[j]
