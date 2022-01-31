@@ -114,8 +114,8 @@ export class MeshLine extends THREE.BufferGeometry {
         this.counters[countIdx + 1] = c;
       }
     } else {
-      this.positions = new Array<number>(2 * points.length);
-      this.counters = new Array<number>(2 * points.length / 3);
+      this.positions = Array(2 * points.length);
+      this.counters = Array(2 * points.length / 3);
       for (var j = 0; j < points.length; j += 3) {
         var c = j / points.length
 
