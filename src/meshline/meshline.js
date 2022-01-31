@@ -29,7 +29,7 @@ export class MeshLine extends THREE.BufferGeometry {
     this.sideFloat32 = new Float32Array();
     this.widthFloat32 = new Float32Array();
     this.uvsFloat32 = new Float32Array();
-    this.indices = new Uint16Array();
+    this.indicesUInt16 = new Uint16Array();
     this.countersFloat32 = new Float32Array();
     this.customColorFloat32 = new Float32Array();
 
