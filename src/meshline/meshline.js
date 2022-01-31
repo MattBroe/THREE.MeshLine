@@ -388,23 +388,23 @@ export class MeshLine extends THREE.BufferGeometry {
         customColor: new THREE.BufferAttribute(this.customColorFloat32, 4)
       }
     } else {
-      this._attributes.position.copyArray(this.positionsFloat32)
+      this._attributes.position.array = this.positionsFloat32
       this._attributes.position.needsUpdate = true
-      this._attributes.previous.copyArray(this.previousFloat32)
+      this._attributes.previous.array = this.previousFloat32
       this._attributes.previous.needsUpdate = true
-      this._attributes.next.copyArray(this.nextFloat32)
+      this._attributes.next.array = this.nextFloat32
       this._attributes.next.needsUpdate = true
-      this._attributes.side.copyArray(this.sideFloat32)
+      this._attributes.side.array = this.sideFloat32
       this._attributes.side.needsUpdate = true
-      this._attributes.width.copyArray(this.widthFloat32)
+      this._attributes.width.array = this.widthFloat32
       this._attributes.width.needsUpdate = true
-      this._attributes.uv.copyArray(this.uvsFloat32)
+      this._attributes.uv.array = this.uvsFloat32
       this._attributes.uv.needsUpdate = true
-      this._attributes.index.copyArray(this.indicesUInt16)
+      this._attributes.index.array = this.indicesUInt16
       this._attributes.index.needsUpdate = true
-      this._attributes.counters.copyArray(this.countersFloat32)
+      this._attributes.counters.array = this.countersFloat32
       this._attributes.counters.needsUpdate = true
-      this._attributes.customColor.copyArray(this.customColorFloat32)
+      this._attributes.customColor.array = this.customColorFloat32
       this._attributes.customColor.needsUpdate = true
     }
 
