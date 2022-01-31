@@ -417,10 +417,10 @@ export class MeshLine extends THREE.BufferGeometry {
     this.setAttribute('counters', this._attributes.counters)
     this.setAttribute('customColor', this._attributes.customColor)
 
-    // this.setIndex(this._attributes.index)
+    this.setIndex(this._attributes.index)
 
-    // this.computeBoundingSphere()
-    // this.computeBoundingBox()
+    this.computeBoundingSphere()
+    this.computeBoundingBox()
   }
 
   /**
