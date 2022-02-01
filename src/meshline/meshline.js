@@ -290,17 +290,6 @@ export class MeshLine extends THREE.BufferGeometry {
     this.setElementsArray(this.next, 6 * (l - 1), v, 0, 3);
     this.setElementsArray(this.next, 6 * (l - 1) + 3, v, 0, 3);
 
-    let float32UpdateParams = [
-        [this.positions, this.positionsFloat32, () => this.positionsFloat32 = new Float32Array(this.positions)],
-        [this.previous, this.previousFloat32],
-        [this.next, this.nextFloat32],
-        [this.side, this.sideFloat32],
-        [this.width, this.widthFloat32],
-        [this.uvs, this.uvsFloat32],
-        [this.counters, this.countersFloat32],
-        [this.customColor, this.customColorFloat32]
-    ];
-
     if (this.positions.length !== this.positionsFloat32.length) {
         this.positionsFloat32 = new Float32Array(this.positions);
     } else {
