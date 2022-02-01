@@ -118,7 +118,7 @@ THREE.ShaderChunk['meshline_frag'] = [
   '        c.a *= ceil(mod(vCounters + dashOffset, dashArray) - (dashArray * dashRatio));',
   '    }',
   '    gl_FragColor = c;',
-  '    gl_FragColor.a *= step(vCounters, visibility);',
+  '    gl_FragColor.a = 0.25;',
   '',
   THREE.ShaderChunk.fog_fragment,
   '}'
