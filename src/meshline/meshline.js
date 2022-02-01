@@ -247,8 +247,8 @@ export class MeshLine extends THREE.BufferGeometry {
       else customColor = [-1, 0, 0, 0]
       //rgba
 
-      this.setElementsArray(this.customColor, 4 * j, customColor, 0, 4);
-      this.setElementsArray(this.customColor, 4 * (j + 1), customColor, 0, 4);
+      this.setElementsArray(this.customColor, 8 * j, customColor, 0, 4);
+      this.setElementsArray(this.customColor, 8 * j + 4, customColor, 0, 4);
 
       // uvs
       let percent = j / (l - 1);
