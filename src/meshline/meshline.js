@@ -233,9 +233,9 @@ export class MeshLine extends THREE.BufferGeometry {
       this.side[2 * j] = 1;
       this.side[2 * j + 1] = -1;
     
-      position[0] = this.positions[3 * j];
-      position[1] = this.positions[3 * j + 1];
-      position[2] = this.positions[3 * j + 2];
+      position[0] = this.positions[6 * j];
+      position[1] = this.positions[6 * j + 1];
+      position[2] = this.positions[6 * j + 2];
       // widths
       if (this.widthCallback) w = this.widthCallback(j / (l - 1), position)
       else w = 1
