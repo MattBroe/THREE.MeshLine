@@ -98,7 +98,7 @@ export class MeshLine extends THREE.BufferGeometry {
     }
   }
 
-  setPoints(points, wcb, ccb) {
+  setPoints(points, wcb, ccb, tangentCoordinates) {
     if (!(points instanceof Float32Array) && !(points instanceof Array)) {
       console.error('ERROR: The BufferArray of points is not instancied correctly.')
       return
@@ -166,7 +166,7 @@ export class MeshLine extends THREE.BufferGeometry {
         this.counters[countIdx + 1] = c;
       }
     }
-    this.process()
+    this.process(tangentCoordinates)
   }
 
   compareV3(a, b) {
@@ -180,7 +180,7 @@ export class MeshLine extends THREE.BufferGeometry {
     return [this.positions[aa], this.positions[aa + 1], this.positions[aa + 2]]
   }
 
-  process() {
+  process(tangentCoordinates) {
     const l = this.positions.length / 6
 
     if (this.previous.length !== 6 * l) {
@@ -227,6 +227,7 @@ export class MeshLine extends THREE.BufferGeometry {
     this.setElementsArray(this.previous, 3, v, 0, 3);
 
     let position = Array(3);
+    let tangent = Array(3);
 
     for (let j = 0; j < l; j++) {
       // sides
@@ -236,14 +237,18 @@ export class MeshLine extends THREE.BufferGeometry {
       position[0] = this.positions[6 * j];
       position[1] = this.positions[6 * j + 1];
       position[2] = this.positions[6 * j + 2];
+
+      tangent[0] = tangentCoordinates[3 * j];
+      tangent[1] = tangentCoordinates[3 * j + 1];
+      tangent[2] = tangentCoordinates[3 * j + 2];
       // widths
-      if (this.widthCallback) w = this.widthCallback(j / (l - 1), position)
+      if (this.widthCallback) w = this.widthCallback(j / (l - 1), position, tangent)
       else w = 1
 
       this.width[2 * j] = w;
       this.width[2 * j + 1] = w;
 
-      if (this.colorCallback) customColor = this.colorCallback(j / (l - 1), position)
+      if (this.colorCallback) customColor = this.colorCallback(j / (l - 1), position, tangent)
       else customColor = [-1, 0, 0, 0]
       //rgba
 
